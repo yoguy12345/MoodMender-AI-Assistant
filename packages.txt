@@ -5,3 +5,7 @@ libsm6
 libxrender1
 libxext6
 libx11-6
+libopenblas-dev
+liblapack-dev
+libx11-dev
+libgtk-3-dev
