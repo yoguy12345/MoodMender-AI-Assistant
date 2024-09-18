@@ -1,3 +1,8 @@
+# Add setuptools and wheel
+setuptools==67.0.0
+wheel==0.38.4
+
+# Existing packages
 absl-py==2.1.0
 aioice==0.9.0
 aiortc==1.9.0
@@ -66,6 +71,7 @@ joblib==1.1.1
 jsonschema==4.21.1
 jsonschema-specifications==2023.12.1
 keras==2.9.0
+keras-nightly==2.5.0.dev2021032900
 Keras-Preprocessing==1.1.2
 libclang==14.0.1
 Markdown==3.3.7
@@ -164,4 +170,3 @@ Werkzeug==3.0.4
 wrapt==1.12.1
 wurlitzer==3.0.3
 zipp==3.8.0
-setuptools==65.5.0  # Added this line to include distutils dependency
