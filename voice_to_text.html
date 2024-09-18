@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice to Text and Text to Speech</title>
+</head>
+<body>
+    <h1>Voice to Text and Text to Speech</h1>
+
+    <!-- Voice to Text Section -->
+    <div>
+        <button id="startButton">Start Recording</button>
+        <p id="output"></p>
+    </div>
+
+    <!-- Text to Speech Section -->
+    <div>
+        <label for="textToSpeak">Enter Text:</label>
+        <input type="text" id="textToSpeak" placeholder="Type something...">
+        <label for="voiceSelect">Select Voice:</label>
+        <select id="voiceSelect"></select>
+        <button id="speakButton">Speak</button>
+    </div>
+
+    <script>
+        // Voice to Text Section
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+            recognition.lang = 'en-US';
+
+            recognition.onstart = () => {
+                document.getElementById('output').textContent = 'Listening...';
+            };
+
+            recognition.onend = () => {
+                document.getElementById('output').textContent = 'Speech recognition ended.';
+            };
+
+            recognition.onresult = (event) => {
+                const result = event.results[0][0].transcript;
+                document.getElementById('output').textContent = 'You said: ' + result;
+
+                console.log('Transcribed Text:', result);
+            };
+
+            recognition.onerror = (event) => {
+                document.getElementById('output').textContent = 'Error occurred: ' + event.error;
+            };
+
+            document.getElementById('startButton').addEventListener('click', () => {
+                recognition.start();
+            });
+        } else {
+            document.getElementById('output').textContent = 'Speech recognition is not supported in this browser.';
+        }
+
+        // Text to Speech Section
+        const speakButton = document.getElementById('speakButton');
+        const textToSpeakInput = document.getElementById('textToSpeak');
+        const voiceSelect = document.getElementById('voiceSelect');
+
+        // Update the voices when they change
+        speechSynthesis.onvoiceschanged = () => {
+            // Clear existing options
+            voiceSelect.innerHTML = '';
+
+            // Populate voice options
+            const voices = speechSynthesis.getVoices();
+            voices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = voice.name;
+                voiceSelect.add(option);
+            });
+        };
+
+        speakButton.addEventListener('click', () => {
+            const textToSpeak = textToSpeakInput.value;
+            const selectedVoiceIndex = voiceSelect.value;
+
+            if (textToSpeak && selectedVoiceIndex !== '') {
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.voice = speechSynthesis.getVoices()[selectedVoiceIndex];
+                speechSynthesis.speak(utterance);
+            }
+        });
+    </script>
+</body>
+</html>

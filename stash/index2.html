@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Chat with GPT</title>
+</head>
+<body>
+    <h1>Interactive Chat with GPT</h1>
+
+    <!-- Voice to Text Section -->
+    <div>
+        <button id="startButton">Start Interactive Chat</button>
+        <p id="output">Your speech will appear here...</p>
+    </div>
+
+    <!-- ChatGPT Response Section -->
+    <div id="gptResponse">GPT's response will appear here...</div>
+
+    <!-- Text to Speech Section -->
+    <div>
+        <label for="voiceSelect">Select Voice:</label>
+        <select id="voiceSelect"></select>
+    </div>
+
+    <script>
+        // Voice to Text Section
+        let speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (speechRecognition) {
+            const recognition = new speechRecognition();
+            recognition.lang = 'en-US';
+
+            recognition.onresult = (event) => {
+                const spokenText = event.results[0][0].transcript;
+                document.getElementById('output').textContent = 'You said: ' + spokenText;
+                sendQueryToChatGPT(spokenText);
+            };
+
+            document.getElementById('startButton').addEventListener('click', () => {
+                recognition.start();
+            });
+        } else {
+            document.getElementById('output').textContent = 'Speech recognition is not supported in this browser.';
+        }
+
+        // Send Query to ChatGPT
+        function sendQueryToChatGPT(query) {
+            fetch('/ask', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ query: query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('gptResponse').innerText = data.answer;
+                speakText(data.answer);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Text to Speech Section
+        let voices = [];
+        const voiceSelect = document.getElementById('voiceSelect');
+        const populateVoices = () => {
+            voices = speechSynthesis.getVoices();
+            voiceSelect.innerHTML = voices.map((voice, index) => `<option value="${index}">${voice.name} (${voice.lang})</option>`).join('');
+        };
+        populateVoices();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoices;
+        }
+
+        function speakText(text) {
+            const selectedVoiceIndex = voiceSelect.value;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = voices[selectedVoiceIndex];
+            speechSynthesis.speak(utterance);
+        }
+    </script>
+</body>
+</html>

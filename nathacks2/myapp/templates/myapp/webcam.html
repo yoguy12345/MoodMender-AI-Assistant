@@ -1,0 +1,11 @@
+<!-- myapp/templates/myapp/upload_video.html -->
+{% extends 'myapp/base.html' %}
+
+{% block content %}
+  <h2>Upload Video</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Upload</button>
+  </form>
+{% endblock %}
