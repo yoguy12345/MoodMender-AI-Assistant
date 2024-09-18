@@ -11,6 +11,6 @@ streamlit-webrtc==0.47.9
 streamlit_mic_recorder==0.0.8
 av==12.3.0
 Pillow==10.2.0
-cmake
-dlib
+cmake==3.25.2  # Specify a version if needed
+dlib==19.24.1  # Specify version if necessary
 face_recognition==1.3.0
